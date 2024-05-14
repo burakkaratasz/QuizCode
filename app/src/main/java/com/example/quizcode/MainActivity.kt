@@ -25,9 +25,15 @@ class MainActivity : AppCompatActivity() {
     }
     private fun getDataFromFirebase(){
         //dummy data - deneme dataları
-        quizModelList.add(QuizModel("1", "Algoritmalar", "Kolay-Orta Seviye Algoritma Soruları", "20"))
-        quizModelList.add(QuizModel("2", "SQL", "Tüm SQL Soruları", "10"))
-        quizModelList.add(QuizModel("3", "Python", "Tüm Python Soruları", "15"))
+
+        val listQuestionModel = mutableListOf<QuestionModel>()
+        listQuestionModel.add(QuestionModel("Android nedir?", mutableListOf("Programlama Dili", "İşletim Sistemi", "Veri Tabanı","Hiçbiri"), "İşletim Sistemi"))
+        listQuestionModel.add(QuestionModel("Kotlin dilinde ekran çıktısı nasıl alınır?", mutableListOf("Console.Writeline()", "System.out.println()", "println()","printf()"), "println()"))
+        listQuestionModel.add(QuestionModel("Kotlin dilinde değişkenler nasıl tanımlanır?", mutableListOf("var, let, const gibi anahtar kelimelerle", "val, var, const gibi anahtar kelimelerle", "variable, value, constant gibi anahtar kelimelerle","int, float, string gibi veri türleriyle"), "val, var, const gibi anahtar kelimelerle"))
+
+        quizModelList.add(QuizModel("1", "Android", "Kolay-Orta Seviye Android Soruları", "10", listQuestionModel))
+        //quizModelList.add(QuizModel("2", "SQL", "Tüm SQL Soruları", "10"))
+        //quizModelList.add(QuizModel("3", "Python", "Tüm Python Soruları", "15"))
         setupRecyclerView()
     }
 }
