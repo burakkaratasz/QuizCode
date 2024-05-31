@@ -1,5 +1,6 @@
 package com.example.quizcode
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.widget.Button
 import com.example.quizcode.databinding.ActivityQuizBinding
+import com.example.quizcode.databinding.ScoreDialogBinding
 
 class QuizActivity : AppCompatActivity(), OnClickListener {
 
@@ -48,6 +50,7 @@ class QuizActivity : AppCompatActivity(), OnClickListener {
             }
 
             override fun onFinish() {
+                //süre bittiğinde yapılacak işlem
                 TODO("Not yet implemented")
             }
 
@@ -55,6 +58,13 @@ class QuizActivity : AppCompatActivity(), OnClickListener {
     }
 
     private fun loadQuestion(){ //soru bilgilerini getiren fonksiyon
+        selectedAnswer = ""
+
+        if(currentQuestionIndex == questionModelList.size){
+            finishQuiz()
+            return
+        }
+
         binding.apply {
             questionIndicatorTextview.text = "Soru ${currentQuestionIndex + 1}/${questionModelList.size}"
             questionProgressIndicator.progress =
@@ -76,6 +86,7 @@ class QuizActivity : AppCompatActivity(), OnClickListener {
             //ileri butonuna basıldığında
             if(selectedAnswer == questionModelList[currentQuestionIndex].correct){
                 score++
+                //skor çalışıyor mu kontrol
                 Log.i("Quiz skoru:", score.toString())
             }
             currentQuestionIndex++
@@ -85,7 +96,31 @@ class QuizActivity : AppCompatActivity(), OnClickListener {
             //ayarlar butonu eklenecek
 
             selectedAnswer = clickedBtn.text.toString()
-            clickedBtn.setBackgroundColor(getColor(R.color.orange))
+            clickedBtn.setBackgroundColor(getColor(R.color.black))
+        }
+    }
+
+    private fun finishQuiz(){
+        val totalQuestions = questionModelList.size
+        val percentage = ((score.toFloat() / totalQuestions.toFloat())*100).toInt()
+
+        val dialogBinding = ScoreDialogBinding.inflate(layoutInflater)
+        dialogBinding.apply {
+            scoreProgressIndicator.progress = percentage
+            scoreProgressText.text = "$percentage"
+            if(percentage>60){
+                scoreTitle.text = "Başarılar! Quiz'i Başarıyla GEÇTİNİZ!"
+                scoreTitle.setTextColor(Color.BLUE)
+
+            }
+            else{
+                scoreTitle.text = "Başarısız..."
+                scoreTitle.setTextColor(Color.RED)
+            }
+            scoreSubtitle.text = "$totalQuestions sorudan $score doğru"
+            finishBtn.setOnClickListener {
+                finish()
+            }
         }
     }
 }
