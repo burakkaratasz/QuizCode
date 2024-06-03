@@ -2,8 +2,10 @@ package com.example.quizcode
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizcode.databinding.ActivityMainBinding
+import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -19,21 +21,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
+        binding.progressBar.visibility = View.GONE //progress bar sakla
         adapter = QuizListAdapter(quizModelList)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
     }
     private fun getDataFromFirebase(){
-        //dummy data - deneme dataları
+        binding.progressBar.visibility = View.VISIBLE //datalar çekilirken progress bar gösterimi
 
-        val listQuestionModel = mutableListOf<QuestionModel>()
-        listQuestionModel.add(QuestionModel("Android nedir?", mutableListOf("Programlama Dili", "İşletim Sistemi", "Veri Tabanı","Hiçbiri"), "İşletim Sistemi"))
-        listQuestionModel.add(QuestionModel("Kotlin dilinde ekran çıktısı nasıl alınır?", mutableListOf("Console.Writeline()", "System.out.println()", "println()","printf()"), "println()"))
-        listQuestionModel.add(QuestionModel("Kotlin dilinde değişkenler nasıl tanımlanır?", mutableListOf("var, let, const gibi anahtar kelimelerle", "val, var, const gibi anahtar kelimelerle", "variable, value, constant gibi anahtar kelimelerle","int, float, string gibi veri türleriyle"), "val, var, const gibi anahtar kelimelerle"))
+        //firebase üzerinden real time dataları çekmek için
+        FirebaseDatabase.getInstance().reference
+            .get()
+            .addOnSuccessListener {dataSnapshot ->
+                if(dataSnapshot.exists()){
+                    for (snapshot in dataSnapshot.children){
+                        val quizModel = snapshot.getValue(QuizModel::class.java) //data convert için
+                        if (quizModel != null) {
+                            quizModelList.add(quizModel)
+                        }
+                    }
+                }
+                setupRecyclerView()
+            }
 
-        quizModelList.add(QuizModel("1", "Android", "Kolay-Orta Seviye Android Soruları", "10", listQuestionModel))
-        //quizModelList.add(QuizModel("2", "SQL", "Tüm SQL Soruları", "10"))
-        //quizModelList.add(QuizModel("3", "Python", "Tüm Python Soruları", "15"))
-        setupRecyclerView()
     }
 }

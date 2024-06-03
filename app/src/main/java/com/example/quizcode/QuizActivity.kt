@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.Button
+import androidx.appcompat.app.AlertDialog
 import com.example.quizcode.databinding.ActivityQuizBinding
 import com.example.quizcode.databinding.ScoreDialogBinding
 
@@ -60,6 +61,12 @@ class QuizActivity : AppCompatActivity(), OnClickListener {
     private fun loadQuestion(){ //soru bilgilerini getiren fonksiyon
         selectedAnswer = ""
 
+        //seçilen buton rengini sıfırlamak için
+        binding.btn0.setBackgroundColor(getColor(R.color.orange))
+        binding.btn1.setBackgroundColor(getColor(R.color.orange))
+        binding.btn2.setBackgroundColor(getColor(R.color.orange))
+        binding.btn3.setBackgroundColor(getColor(R.color.orange))
+
         if(currentQuestionIndex == questionModelList.size){
             finishQuiz()
             return
@@ -109,18 +116,23 @@ class QuizActivity : AppCompatActivity(), OnClickListener {
             scoreProgressIndicator.progress = percentage
             scoreProgressText.text = "$percentage"
             if(percentage>60){
-                scoreTitle.text = "Başarılar! Quiz'i Başarıyla GEÇTİNİZ!"
-                scoreTitle.setTextColor(Color.BLUE)
+                scoreTitle.text = "Tebrikler! Quiz'i Başarıyla GEÇTİNİZ!"
+                scoreTitle.setTextColor(getColor(R.color.blue))
 
             }
             else{
                 scoreTitle.text = "Başarısız..."
                 scoreTitle.setTextColor(Color.RED)
             }
-            scoreSubtitle.text = "$totalQuestions sorudan $score doğru"
+            scoreSubtitle.text = "$totalQuestions sorudan $score adet doğru"
             finishBtn.setOnClickListener {
                 finish()
             }
         }
+
+        AlertDialog.Builder(this)
+            .setView(dialogBinding.root)
+            .setCancelable(false)
+            .show()
     }
 }
